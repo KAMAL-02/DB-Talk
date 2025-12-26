@@ -19,3 +19,12 @@ export const loginHandler: RouteHandler<{Body: LoginBody}> = async(request, repl
         error: 'Invalid credentials'
     })
 }
+
+export const meHandler: RouteHandler = async(request, reply ) => {
+    const user = request.user as { email: string };
+    request.server.log.info(user, `Authenticated user`);
+    return reply.status(200).send({
+        success: true,
+        data: { email: user.email }
+    });
+}

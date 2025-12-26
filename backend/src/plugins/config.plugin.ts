@@ -15,6 +15,9 @@ export const config: AppConfig = {
     ADMIN_EMAIL: process.env.ADMIN_EMAIL || '',
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || '',
     JWT_SECRET: process.env.JWT_SECRET || '',
+    DB_COPILOT_URL: process.env.DB_COPILOT_URL || '',
+    REDIS_URL: process.env.REDIS_URL || '',
+    REDIS_ENCRYPTION_SECRET: process.env.REDIS_ENCRYPTION_SECRET || '',
 }
 
 export const configPlugin = fp(async (app: FastifyInstance) => {

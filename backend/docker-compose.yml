@@ -1,0 +1,26 @@
+services:
+  db-copilot-postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: db_copilot_user
+      POSTGRES_PASSWORD: db_copilot_password
+      POSTGRES_DB: db_copilot_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_copilot_postgres_data:/var/lib/postgresql/data
+
+  db-copilot-redis:
+    image: redis:7
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - db_copilot_redis_data:/data
+    command: redis-server --appendonly yes
+
+
+volumes:
+  db_copilot_postgres_data:
+  db_copilot_redis_data:

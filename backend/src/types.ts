@@ -5,6 +5,9 @@ export interface AppConfig {
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD: string;
   JWT_SECRET: string;
+  DB_COPILOT_URL: string;
+  REDIS_URL: string;
+  REDIS_ENCRYPTION_SECRET: string;
 }
 
 export interface LoginBody {
@@ -23,17 +26,21 @@ export interface JWTPayload {
 type PostgresUrlCredentials = {
   source: "postgres";
   mode: "url";
-  connectionString: string;
+  dbCredentials: {
+    connectionString: string;
+  };
 };
 
 type PostgresPartsCredentials = {
   source: "postgres";
   mode: "parts";
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  database: string;
+  dbCredentials: {
+    host: string;
+    port: number;
+    username: string;
+    password: string;
+    database: string;
+  };
 };
 
 /* ---------- MONGO ---------- */
@@ -60,4 +67,16 @@ export type DatabaseCredentialsBody =
   | MongoUrlCredentials
   | MongoPartsCredentials;
 
-export type testPostgresCredential = PostgresUrlCredentials | PostgresPartsCredentials;
+export type testPostgresCredential =
+  | PostgresUrlCredentials
+  | PostgresPartsCredentials;
+
+export type saveDbCredentials = {
+  source: "postgres" | "mongo";
+  mode: "url" | "parts";
+  databaseId: string;
+};
+
+export type connectDb = {
+  databaseId: string;
+}

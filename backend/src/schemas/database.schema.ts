@@ -3,7 +3,7 @@ import type { FastifySchema } from "fastify";
 export const databaseCredentialsSchema: FastifySchema = {
   body: {
     type: "object",
-    required: ["source", "mode"],
+
     properties: {
       source: {
         type: "string",
@@ -13,92 +13,148 @@ export const databaseCredentialsSchema: FastifySchema = {
         type: "string",
         enum: ["url", "parts"],
       },
+      dbCredentials: {
+        type: "object",
+        properties: {
+          connectionString: { type: "string" },
+          host: { type: "string" },
+          port: { type: "number" },
+          username: { type: "string" },
+          password: { type: "string" },
+          database: { type: "string" },
+        },
+        additionalProperties: false,
+      },
     },
-    /**
-       * * oneOf is used here to create conditional validation rules based on the
-       * * combination of 'source' and 'mode' fields.
-       * * Depending on these values, different sets of required fields and validation
-       * * rules are applied.
-    */
-    oneOf: [
 
-      /* Postgres - URL Mode */
+    required: ["source", "mode", "dbCredentials"],
+
+    allOf: [
+      /* ---------- POSTGRES / URL ---------- */
       {
         if: {
+          type: "object",
           properties: {
             source: { const: "postgres" },
             mode: { const: "url" },
           },
         },
         then: {
-          required: ["url"],
+          type: "object",
           properties: {
-            connectionString: {
-              type: "string",
-              pattern: "^postgres(ql)?:\\/\\/",
+            dbCredentials: {
+              type: "object",
+              required: ["connectionString"],
+              properties: {
+                connectionString: {
+                  type: "string",
+                  pattern: "^postgres(ql)?:\\/\\/",
+                },
+              },
             },
           },
         },
       },
 
-      /* Postgres - Parts Mode */
+      /* ---------- POSTGRES / PARTS ---------- */
       {
         if: {
+          type: "object",
           properties: {
             source: { const: "postgres" },
             mode: { const: "parts" },
           },
         },
         then: {
-          required: ["host", "port", "username", "password", "database"],
+          type: "object",
           properties: {
-            host: { type: "string" },
-            port: { type: "number" },
-            username: { type: "string" },
-            password: { type: "string" },
-            database: { type: "string" },
+            dbCredentials: {
+              type: "object",
+              required: [
+                "host",
+                "port",
+                "username",
+                "password",
+                "database",
+              ],
+            },
           },
         },
       },
 
-      /* MongoDB - URL Mode */
+      /* ---------- MONGO / URL ---------- */
       {
         if: {
+          type: "object",
           properties: {
             source: { const: "mongo" },
             mode: { const: "url" },
           },
         },
         then: {
-          required: ["url"],
+          type: "object",
           properties: {
-            connectionString: {
-              type: "string",
-              pattern: "^mongodb(\\+srv)?:\\/\\/",
+            dbCredentials: {
+              type: "object",
+              required: ["connectionString"],
+              properties: {
+                connectionString: {
+                  type: "string",
+                  pattern: "^mongodb(\\+srv)?:\\/\\/",
+                },
+              },
             },
           },
         },
       },
 
-      /* MongoDB - Parts Mode */
+      /* ---------- MONGO / PARTS ---------- */
       {
         if: {
+          type: "object",
           properties: {
             source: { const: "mongo" },
             mode: { const: "parts" },
           },
         },
         then: {
-          required: ["host", "port", "database"],
+          type: "object",
           properties: {
-            host: { type: "string" },
-            port: { type: "number" },
-            username: { type: "string" },
-            password: { type: "string" },
-            database: { type: "string" },
+            dbCredentials: {
+              type: "object",
+              required: ["host", "port", "database"],
+            },
           },
         },
       },
     ],
   },
 };
+
+export const saveDbCredsSchema : FastifySchema = {
+  body: {
+    type: "object",
+    properties: {
+      source: {
+        type: "string",
+        enum: ["postgres", "mongo"],
+      },
+      mode: {
+        type: "string",
+        enum: ["url", "parts"],
+      },
+      databaseId: { type: "string" },
+    },
+    required: ["databaseId"],
+  }
+}
+
+export const connectDbSchema : FastifySchema = {
+  body: {
+    type: "object",
+    properties: {
+      databaseId: { type: "string" },
+    },
+    required: ["databaseId"],
+  }
+}

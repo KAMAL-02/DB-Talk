@@ -1,5 +1,5 @@
 import fastify from 'fastify';
-import { config } from './plugins/config.js';
+import { config } from './plugins/config.plugin.js';
 
 const isDevelopment = config.ENV === 'development';
 
