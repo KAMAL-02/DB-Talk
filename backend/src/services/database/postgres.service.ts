@@ -1,6 +1,7 @@
 import { Client, Pool } from "pg";
 import type { testPostgresCredential } from "../../types.js";
 import { buildConnectionConfig } from "../../utils/cred.util.js";
+import { pgIntrospectionQueries } from "../../utils/introspection.util.js";
 
 const pools = new Map<string, Pool>();
 
@@ -49,5 +50,27 @@ export const closePgPool = async (databaseId: string) => {
   if (pool) {
     await pool.end();
     pools.delete(databaseId);
+  }
+};
+
+export const introspectSchema = async (source: string, pool: Pool) => {
+  switch (source) {
+    case "postgres":
+      const [tableRes, coloumnRes, pkRes, fkRes] = await Promise.all([
+        pool.query(pgIntrospectionQueries.selectTablesQuery),
+        pool.query(pgIntrospectionQueries.selectColumnsQuery),
+        pool.query(pgIntrospectionQueries.selectPrimaryKeyQuery),
+        pool.query(pgIntrospectionQueries.selectForeignKeyQuery),
+      ]);
+
+      return {
+        tables: tableRes.rows,
+        columns: coloumnRes.rows,
+        primaryKeys: pkRes.rows,
+        foreignKeys: fkRes.rows,
+      };
+
+    default:
+      throw new Error(`Introspection not supported for source: ${source}`);
   }
 };

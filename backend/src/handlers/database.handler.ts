@@ -7,6 +7,7 @@ import * as cryptoUtil from "../utils/crypto.util.js";
 import { databaseConnections } from "../db/schema/schema.js";
 import { eq } from "drizzle-orm";
 import { buildConnectionConfig } from "../utils/cred.util.js";
+import { normalizePgSchema } from "../utils/introspection.util.js";
 
 export const testConnectionHandler: RouteHandler<{Body: DatabaseCredentialsBody}> = async (request, reply) => {
     const { source, mode, ...dbCred } = request.body;
@@ -20,7 +21,7 @@ export const testConnectionHandler: RouteHandler<{Body: DatabaseCredentialsBody}
             if(!encryptedCredentials) {
                 return reply.status(500).send({ success: false, message: 'Failed to encrypt database credentials' });
             }
-            redisService.cacheSchema(request.server.redis, databaseId, encryptedCredentials);
+            redisService.cacheDbCredentials(request.server.redis, databaseId, encryptedCredentials);
             return reply.status(200).send({ success: true, message: 'Configuration validated', data: { databaseId } });
         } catch (error) {
             request.server.log.error(error, 'Postgres connection test failed');
@@ -37,7 +38,7 @@ export const saveDbCredentialsHandler: RouteHandler<{Body: saveDbCredentials}> =
     const { databaseId, source, mode }  = request.body;
 
     try {
-        const cachedData = await redisService.getCachedSchema(request.server.redis, databaseId);
+        const cachedData = await redisService.getCachedDbCredentials(request.server.redis, databaseId);
         if (!cachedData) {
             return reply.status(404).send({ success: false, message: 'No configuration found for the provided database, please try again' });
         }
@@ -50,7 +51,7 @@ export const saveDbCredentialsHandler: RouteHandler<{Body: saveDbCredentials}> =
         const insertedPayload = await request.server.db.insert(databaseConnections).values(insertPayload);
         console.log("Inserted Payload:", insertedPayload);
 
-        await redisService.clearCachedSchema(request.server.redis, databaseId);
+        await redisService.clearCachedDbCredentials(request.server.redis, databaseId);
 
         return reply.status(201).send({ success: true, message: 'Database saved successfully' });
     } catch (error) {
@@ -96,7 +97,20 @@ export const connectDbHandler: RouteHandler<{Body: connectDb}> = async(request, 
         const res = await pgPool.query('SELECT NOW()');
         console.log('Database connection successful:', res.rows);
 
-        return reply.status(200).send({ success: true, message: 'Connected to database successfully' });
+        if(!res){
+            return reply.status(500).send({ success: false, message: 'Failed to connect to database' });
+        }
+
+        const extractedSchema = await postgresService.introspectSchema('postgres', pgPool);
+
+        if(!extractedSchema){
+            return reply.status(500).send({ success: false, message: 'Failed to introspect database schema' });
+        }
+
+        const normalizeSchema = normalizePgSchema(extractedSchema);
+        redisService.cacheSchema(request.server.redis, databaseId, normalizeSchema);
+
+        return reply.status(200).send({ success: true, message: 'Connected to database successfully', data: databaseId });
 
     } catch (error) {
         request.server.log.error(error, 'Error connecting to database');

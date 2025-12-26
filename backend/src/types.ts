@@ -80,3 +80,21 @@ export type saveDbCredentials = {
 export type connectDb = {
   databaseId: string;
 }
+
+export type NormalizedSchema = {
+  source: string;
+  tables: {
+    [tableName: string]: {
+      columns: {
+        name: string;
+        type: string;
+        nullable: boolean;
+        isPrimaryKey: boolean;
+        foreignKey?: {
+          referencesTable: string;
+          referencesColumn: string;
+        };
+      }[];
+    };
+  };
+};
