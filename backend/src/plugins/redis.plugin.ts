@@ -3,8 +3,6 @@ import fp from "fastify-plugin";
 import { config } from "./config.plugin.js";
 import { Redis } from "ioredis";
 
-const redisUrl = config?.REDIS_URL;
-
 declare module 'fastify' {
     interface FastifyInstance {
         redis: Redis;
@@ -12,7 +10,7 @@ declare module 'fastify' {
 }
 
 export const redisPlugin = fp(async (app: FastifyInstance) => {
-  const redis = new Redis(redisUrl);
+  const redis = new Redis(app.config.REDIS_URL);
 
   app.decorate("redis", redis);
 

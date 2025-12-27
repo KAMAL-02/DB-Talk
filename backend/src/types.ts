@@ -98,3 +98,15 @@ export type NormalizedSchema = {
     };
   };
 };
+export interface ChatBody {
+  databaseId: string;
+  message: string;
+}
+
+export interface SQLExecutionResult {
+  success: boolean;
+  data?: any[];
+  rowCount?: number;
+  error?: string;
+  executionTime?: number;
+}

@@ -1,4 +1,3 @@
-import type { AnyAaaaRecord } from "dns";
 import type { Redis as RedisType } from "ioredis";
 
 export const cacheDbCredentials = async ( redis: RedisType, databaseId: string, schema: any ) => {

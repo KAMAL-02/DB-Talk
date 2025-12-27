@@ -92,10 +92,10 @@ export const connectDbHandler: RouteHandler<{Body: connectDb}> = async(request, 
         const connectionConfig = buildConnectionConfig(buildConnectionConfigParameter);
         console.log("Connection Config:", connectionConfig);
 
-        const pgPool = postgresService.getOrCreatePgPool(databaseId, connectionConfig);
+        const pgPool = postgresService.createPgPool(databaseId, connectionConfig);
 
         const res = await pgPool.query('SELECT NOW()');
-        console.log('Database connection successful:', res.rows);
+        request.server.log.info(res.rows, 'Database response');
 
         if(!res){
             return reply.status(500).send({ success: false, message: 'Failed to connect to database' });

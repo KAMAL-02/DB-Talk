@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { authRoutes } from './auth.routes.js';
 import { databaseRoutes } from './database.route.js';
+import { chatRoutes } from './chat.routes.js';
 
 export const registerRoutes = async (app: FastifyInstance) => {
 
@@ -13,4 +14,5 @@ export const registerRoutes = async (app: FastifyInstance) => {
 
     await app.register(authRoutes, { prefix: '/auth' });
     await app.register(databaseRoutes, { prefix: '/database' });
+    await app.register(chatRoutes, { prefix: '/chat' });
 };

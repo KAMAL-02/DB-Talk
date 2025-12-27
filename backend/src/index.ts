@@ -6,6 +6,7 @@ import { corsPlugin } from './plugins/cors.plugin.js';
 import { registerRoutes } from './routes/index.js';
 import { dbPlugin } from './plugins/db.plugin.js';
 import { redisPlugin } from './plugins/redis.plugin.js';
+import { geminiPlugin } from './plugins/gemini.plugin.js';
 
 const start = async () => {
     try {
@@ -13,6 +14,7 @@ const start = async () => {
         await app.register(configPlugin);
         await app.register(dbPlugin);
         await app.register(redisPlugin);
+        await app.register(geminiPlugin);
         await app.register(corsPlugin);
         await app.register(jwtPlugin);
         
