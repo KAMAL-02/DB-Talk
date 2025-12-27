@@ -4,8 +4,9 @@ import type { RouteHandler } from "fastify";
 export const loginHandler: RouteHandler<{Body: LoginBody}> = async(request, reply) => {
     const { email, password } = request.body;
     const { ADMIN_EMAIL, ADMIN_PASSWORD } = request.server.config;
-
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    
+    try {
+        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         const token = request.server.jwt.sign({email}, {expiresIn: '24h'});
 
         return reply.status(200).send({
@@ -18,6 +19,13 @@ export const loginHandler: RouteHandler<{Body: LoginBody}> = async(request, repl
         success: false,
         error: 'Invalid credentials'
     })
+    } catch (error) {
+        request.server.log.error(error, 'Error during login');
+        return reply.status(500).send({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
 }
 
 export const meHandler: RouteHandler = async(request, reply ) => {
