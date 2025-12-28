@@ -11,7 +11,7 @@ import {
 
 export function NavMain({
   items,
-  onItemClick,
+  onItemClick
 }: {
   items: {
     title: string

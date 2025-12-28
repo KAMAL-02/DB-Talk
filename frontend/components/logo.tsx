@@ -28,7 +28,7 @@ const Logo = ({
       )}
     >
       <GiDatabase size={iconSize} />
-      {showText && <span className={textSize}>- Talk</span>}
+      {showText && <span className={textSize}>- TALK</span>}
     </div>
   );
 };

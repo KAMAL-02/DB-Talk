@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { notifySuccess, notifyError } from "@/lib/utils";
+import { notifySuccess, notifyError, saveAccessToken } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -54,9 +54,11 @@ const AuthForm = () => {
       if(response.status !== 200){
         throw new Error(response.data.error);
       }
+      const access_token = response.data.data.token
+      saveAccessToken(access_token);
       router.push("/dashboard");
     } catch (error: any) {
-      notifyError(error?.response, "Login failed");
+      notifyError(error, "Login failed");
     }
   };
 

@@ -1,6 +1,6 @@
 const HistorySidebar = () => {
   return (
-    <div className="h-full mr-2 rounded-r-xl bg-gray-500 border-l border-zinc-700 shadow-sm overflow-hidden">
+    <div className="h-full  rounded-r-xl bg-gray-100 border-l border-zinc-700 shadow-sm overflow-hidden">
       <div className="p-6">
         <h3 className="text-lg font-semibold mb-4">History</h3>
         <div className="space-y-3 text-sm text-muted-foreground">

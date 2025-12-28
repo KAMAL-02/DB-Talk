@@ -11,13 +11,25 @@ export const getAccessToken = () => {
   return localStorage.getItem("access_token");
 };
 
+export const saveAccessToken = (token: string) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("access_token", token);
+}
+
+export const logout = () => {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("access_token");
+  window.location.href = "/signin";
+}
+
 export const notifySuccess = (title: string, desc?: string) =>
   toast.success(title, { description: desc })
 
 export const notifyError = (error: any, title: string) => {
   toast.error(title, {
     description:
-      error?.data?.error ||
+      error?.response?.data?.error ||
+      error?.response?.data?.message ||
       error?.message ||
       "Please try again.",
   })

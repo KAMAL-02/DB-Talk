@@ -4,12 +4,12 @@ import * as React from "react"
 import { FaPlus } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { LuLogOut } from "react-icons/lu";
-import Logo from "./logo";
+import Logo from "../logo";
 import Link from "next/link";
 import { logout } from "@/lib/utils";
 import { AddDatabaseModal } from "@/components/sidebar/add-database-modal";
 
-import { NavMain } from "@/components/nav-main"
+import { NavMain } from "@/components/sidebar/nav-main"
 import {
   Sidebar,
   SidebarContent,
@@ -92,7 +92,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           ))}
         </SidebarMenu>
       </SidebarFooter>
-      
       <AddDatabaseModal open={addDatabaseOpen} onOpenChange={setAddDatabaseOpen} />
     </Sidebar>
   )
