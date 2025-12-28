@@ -159,3 +159,13 @@ export const connectDbSchema : FastifySchema = {
     required: ["databaseId"],
   }
 }
+
+export const deleteDbSchema : FastifySchema = {
+  body: {
+    type: "object",
+    properties: {
+      databaseIds: { type: "array", items: { type: "string" } },
+    },
+    required: ["databaseIds"],
+  }
+}

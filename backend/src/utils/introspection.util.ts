@@ -92,3 +92,7 @@ export const normalizePgSchema = (raw: {
 
   return schema;
 };
+
+export const quoteIdentifier = (name: string) => {
+  return /[A-Z]/.test(name) ? `"${name}"` : name;
+}

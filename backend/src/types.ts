@@ -111,3 +111,7 @@ export interface SQLExecutionResult {
   error?: string;
   executionTime?: number;
 }
+
+export interface DeleteDb {
+  databaseIds: string[];
+}

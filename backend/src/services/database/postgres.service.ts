@@ -24,16 +24,13 @@ export const testPostgresConnection = async (cred: testPostgresCredential) => {
   }
 };
 
-export const createPgPool = (
-  databaseId: string,
-  connectionConfig: any
-) => {
+export const createPgPool = ( databaseId: string, connectionConfig: any ) => {
   if (!databaseId) {
     throw new Error("Database ID is required to create or get a pool");
   }
 
   if (pools.has(databaseId)) {
-    return pools.get(databaseId)!;
+    throw new Error("The connection pool of this database already exists");
   }
 
   if (!connectionConfig) {
@@ -48,6 +45,14 @@ export const createPgPool = (
   });
 
   pools.set(databaseId, newPool);
+
+  /** only one pool can exist at a time */
+  pools.forEach((pool, dbId) => {
+    if (dbId !== databaseId) {
+      pool.end();
+      pools.delete(dbId);
+    }
+  });
   return newPool;
 };
 
@@ -62,6 +67,15 @@ export const closePgPool = async (databaseId: string) => {
     pools.delete(databaseId);
   }
 };
+
+export const getActivePgPoolDatabaseId = async () => {
+  if (pools.size === 0) {
+    throw new Error("No active database connection pool found");
+  }
+  /** There will be only 1 pool at any moment of time */
+  const [databaseId] = pools.keys();
+  return databaseId;
+}
 
 export const introspectSchema = async (source: string, pool: Pool) => {
   switch (source) {
@@ -282,7 +296,7 @@ export const executeSQLQuery = async (
       text: cleanSQL,
       rowMode: "array",
     });
-
+    if (!result) throw new Error("Error executing SQL query, please try again");
     const executionTime = Date.now() - startTime;
 
     const data = result.rows.map((row) => {

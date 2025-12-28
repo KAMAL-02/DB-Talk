@@ -1,6 +1,6 @@
-import { databaseCredentialsSchema, saveDbCredsSchema, connectDbSchema } from "../schemas/database.schema.js";
+import { databaseCredentialsSchema, saveDbCredsSchema, connectDbSchema, deleteDbSchema } from "../schemas/database.schema.js";
 import type { FastifyInstance } from "fastify";
-import type { DatabaseCredentialsBody, saveDbCredentials, connectDb  } from "../types.js";
+import type { DatabaseCredentialsBody, saveDbCredentials, connectDb, DeleteDb  } from "../types.js";
 import * as database from "../handlers/database.handler.js";
 
 export const databaseRoutes = async (app: FastifyInstance) => {
@@ -23,5 +23,24 @@ export const databaseRoutes = async (app: FastifyInstance) => {
     schema: connectDbSchema 
   }, 
     database.connectDbHandler
+  );
+
+  app.get<any>("/list-database", {
+    preHandler: app.authenticate,
+  }, 
+    database.listDbHandler
+  );
+
+  app.post<{Body: DeleteDb}>("/delete-database", {
+    preHandler: app.authenticate,
+    schema: deleteDbSchema
+  }, 
+    database.deleteDbHandler
+  );
+
+  app.get("/get-active-database", {
+    preHandler: app.authenticate,
+  }, 
+    database.getActiveDatabaseHandler
   );
 };

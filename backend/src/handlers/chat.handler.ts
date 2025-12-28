@@ -7,16 +7,10 @@ import * as geminiService from "../services/gemini/gemini.service.js";
 
 export const askHandler: RouteHandler<{ Body: ChatBody }> = async (request, reply) => {
   const { databaseId, message } = request.body;
-
+  let generatedSQL;
   try {
-
     const pgPool = postgresService.getPgPool(databaseId);
-    if (!pgPool) {
-      return reply.status(404).send({
-        success: false,
-        error: "Database connection not found. Please connect to the database first.",
-      });
-    }
+    if (!pgPool) throw new Error("No database connection found. Please reconnect to the database.");
 
     try {
       await pgPool.query("SELECT 1");
@@ -30,35 +24,19 @@ export const askHandler: RouteHandler<{ Body: ChatBody }> = async (request, repl
 
     // Get cached schema from Redis
     const cachedSchema = await redisService.getCachedSchema(request.server.redis, databaseId);
-    if (!cachedSchema) {
-      return reply.status(404).send({
-        success: false,
-        error: "Database schema not found. Please reconnect to the database.",
-      });
-    }
+    if (!cachedSchema) throw new Error("Error retreiving database, please reconnect the database.");
 
     const schema = cachedSchema as NormalizedSchema;
-
     const prunedSchema = await pruneSchema(schema, message);
-
-    /**
-     * TODO: Ask LLM with pruned schema context, validate sql provided by LLM, 
-     * TODO: write service to execute SQL, return response to user
-     */
     const response = await geminiService.generateSQLFromQuery(
       request.server.gemini,
       message,
       prunedSchema
     );
+    if (!response || !response.sql) throw new Error("Failed to generate query from the provided message.");
+    generatedSQL = response.sql;
 
-    const generatedSQL = response.sql;
-    if (!generatedSQL) {
-      return reply.status(500).send({
-        success: false,
-        error: "Failed to generate query from the provided message.",
-      });
-    }
-
+    console.log("Generated SQL:", generatedSQL);
     const { isValid, error } = postgresService.validateSQL(generatedSQL);
 
     if(error || !isValid) {
@@ -80,9 +58,17 @@ export const askHandler: RouteHandler<{ Body: ChatBody }> = async (request, repl
     });
   } catch (error: any) {
     request.server.log.error(error, "Unexpected error in askHandler");
+    if(error instanceof Error ){
+      return reply.status(500).send({
+        success: false,
+        error: error.message ?? "An unexpected error occurred while processing your request",
+        sql: generatedSQL
+      });
+    }
     return reply.status(500).send({
       success: false,
       error: "An unexpected error occurred while processing your request",
+      sql: generatedSQL
     });
   }
 };

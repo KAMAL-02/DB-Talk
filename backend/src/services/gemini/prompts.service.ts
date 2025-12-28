@@ -11,6 +11,8 @@ export const initializePrompt = `You are an expert SQL query generator and datab
 8. Respond with ONLY valid JSON format
 9. Do NOT wrap output in markdown
 10. Do NOT add explanations outside JSON
+11. Always wrap ALL table names and column names in double quotes (")
+12. Never output unquoted identifiers. Preserve exact casing from the schema. Example: "Post", "User", "authorId"
 
 You must always respond in valid JSON format with "sql" and "explanation" fields.`;
 
