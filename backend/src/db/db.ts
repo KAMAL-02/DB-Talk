@@ -10,7 +10,7 @@ const expanded_schema = {
 }
 
 const pgPool = new pool({
-    connectionString: config.DB_COPILOT_URL,
+    connectionString: config.DB_TALK_URL,
 })
 
 pgPool.on('error', (err) => {

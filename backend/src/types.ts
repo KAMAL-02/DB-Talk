@@ -5,7 +5,7 @@ export interface AppConfig {
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD: string;
   JWT_SECRET: string;
-  DB_COPILOT_URL: string;
+  DB_TALK_URL: string;
   REDIS_URL: string;
   REDIS_ENCRYPTION_SECRET: string;
 }
