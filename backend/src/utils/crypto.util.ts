@@ -41,3 +41,10 @@ export function decryptObject<T>(payload: any): T {
 
   return JSON.parse(decrypted.toString("utf8")) as T;
 }
+
+export function generateDatabaseId(input: object) {
+  return crypto
+    .createHash("sha256")
+    .update(JSON.stringify(input))
+    .digest("hex");
+}

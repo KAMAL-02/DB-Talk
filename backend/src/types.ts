@@ -74,6 +74,7 @@ export type testPostgresCredential =
 export type saveDbCredentials = {
   source: "postgres" | "mongo";
   mode: "url" | "parts";
+  dbName: string;
   databaseId: string;
 };
 

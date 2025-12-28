@@ -144,8 +144,9 @@ export const saveDbCredsSchema : FastifySchema = {
         enum: ["url", "parts"],
       },
       databaseId: { type: "string" },
+      dbName: { type: "string"}
     },
-    required: ["databaseId"],
+    required: ["databaseId", "dbName"],
   }
 }
 

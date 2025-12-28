@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "uniq_dbname_per_source" ON "database_connections" USING btree ("source","db_name");

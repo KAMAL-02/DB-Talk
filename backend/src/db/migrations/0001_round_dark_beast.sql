@@ -1,0 +1,1 @@
+ALTER TABLE "database_connections" ADD COLUMN "db_name" text NOT NULL;

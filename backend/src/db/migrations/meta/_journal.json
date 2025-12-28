@@ -8,6 +8,20 @@
       "when": 1766734128488,
       "tag": "0000_cynical_hobgoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1766914244805,
+      "tag": "0001_round_dark_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1766921317910,
+      "tag": "0002_lazy_magma",
+      "breakpoints": true
     }
   ]
 }
