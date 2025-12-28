@@ -25,6 +25,7 @@ import Image from "next/image";
 import { notifySuccess, notifyError } from "@/lib/utils";
 import useApi from "@/hooks/useApi";
 import { testConnection, saveDatabase } from "@/lib/api";
+import { useDatabaseStore } from "@/store/useDatabaseStore";
 
 interface AddDatabaseModalProps {
   open: boolean;
@@ -95,6 +96,7 @@ export function AddDatabaseModal({
   const [databaseId, setDatabaseId] = useState<string | null>(null);
   const [dbName, setDbName] = useState<string>("");
 
+  const triggerRefresh = useDatabaseStore((state) => state.triggerRefresh);
   const { handleRequest: callTestConnection } = useApi(testConnection);
   const { handleRequest: callSaveDatabase } = useApi(saveDatabase);
 
@@ -156,6 +158,7 @@ export function AddDatabaseModal({
         reset();
         setDbName("");
         onOpenChange(false);
+        triggerRefresh();
       }
     } catch (error: any) {
       if (error instanceof Error) {

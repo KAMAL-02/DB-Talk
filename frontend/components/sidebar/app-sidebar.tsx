@@ -8,6 +8,7 @@ import Logo from "../logo";
 import Link from "next/link";
 import { logout } from "@/lib/utils";
 import { AddDatabaseModal } from "@/components/sidebar/add-database-modal";
+import { DeleteDatabaseModal } from "@/components/sidebar/delete-database-modal";
 
 import { NavMain } from "@/components/sidebar/nav-main"
 import {
@@ -20,6 +21,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { url } from "inspector";
+import { set } from "zod";
 
 const data = {
   user: {
@@ -35,9 +37,10 @@ const data = {
       action: "add-database"
     },
     {
-      title: "Remove Database",
+      title: "Delete Database",
       url: "#",
       icon: FaRegTrashCan,
+      action: "delete-database"
     },
   ],
   navFooter: [
@@ -50,11 +53,17 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [deleteDatabaseOpen, setDeleteDatabaseOpen] = React.useState(false)
   const [addDatabaseOpen, setAddDatabaseOpen] = React.useState(false)
 
   const handleNavClick = (action?: string) => {
     if (action === "add-database") {
       setAddDatabaseOpen(true)
+    } else if (action === "delete-database") {
+      setDeleteDatabaseOpen(true)
+    } else {
+      setAddDatabaseOpen(false)
+      setDeleteDatabaseOpen(false)
     }
   }
 
@@ -90,6 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+      <DeleteDatabaseModal open={deleteDatabaseOpen} onOpenChange={setDeleteDatabaseOpen} />
         </SidebarMenu>
       </SidebarFooter>
       <AddDatabaseModal open={addDatabaseOpen} onOpenChange={setAddDatabaseOpen} />

@@ -2,7 +2,7 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AppHeader } from "@/components/app-header"
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
-import HistorySidebar from "@/components/dashboard/history-sidebar"
+import DbSidebar from "@/components/dashboard/db-sidebar"
 
 export default function DashboardLayout({
   children,
@@ -28,10 +28,10 @@ export default function DashboardLayout({
             </div>
           </ResizablePanel>
           
-          <ResizableHandle withHandle />
+          <ResizableHandle withHandle className="text-orange-500" />
           
-          <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
-            <HistorySidebar />
+          <ResizablePanel defaultSize={20} minSize={16} maxSize={25}>
+            <DbSidebar />
           </ResizablePanel>
         </ResizablePanelGroup>
       </SidebarInset>

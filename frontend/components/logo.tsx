@@ -1,4 +1,4 @@
-import { GiDatabase } from "react-icons/gi";
+import { FaDatabase } from "react-icons/fa";
 import clsx from "clsx";
 
 type LogoProps = {
@@ -27,7 +27,7 @@ const Logo = ({
         className
       )}
     >
-      <GiDatabase size={iconSize} />
+      <FaDatabase size={iconSize} />
       {showText && <span className={textSize}>- TALK</span>}
     </div>
   );

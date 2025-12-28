@@ -1,9 +1,10 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export const getAccessToken = () => {
@@ -14,16 +15,16 @@ export const getAccessToken = () => {
 export const saveAccessToken = (token: string) => {
   if (typeof window === "undefined") return;
   localStorage.setItem("access_token", token);
-}
+};
 
 export const logout = () => {
   if (typeof window === "undefined") return;
   localStorage.removeItem("access_token");
   window.location.href = "/signin";
-}
+};
 
 export const notifySuccess = (title: string, desc?: string) =>
-  toast.success(title, { description: desc })
+  toast.success(title, { description: desc });
 
 export const notifyError = (error: any, title: string) => {
   toast.error(title, {
@@ -32,6 +33,5 @@ export const notifyError = (error: any, title: string) => {
       error?.response?.data?.message ||
       error?.message ||
       "Please try again.",
-  })
-}
-
+  });
+};
