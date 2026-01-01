@@ -1,4 +1,4 @@
-# 🗣️ DB-Talk
+# DB-Talk
 
 **Talk to Your Database in Natural Language**
 
