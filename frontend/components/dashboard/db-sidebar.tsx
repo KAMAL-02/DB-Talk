@@ -12,6 +12,7 @@ import { useDatabaseStore } from "@/store/useDatabaseStore";
 import { notifySuccess, notifyError } from "@/lib/utils";
 import { Spinner } from "../ui/spinner";
 import { FaConnectdevelop } from "react-icons/fa6";
+import { DbSidebarSkeleton } from "@/components/skeletons";
 
 interface Database {
   id: string;
@@ -108,11 +109,11 @@ const DbSidebar = () => {
     );
   };
   return (
-    <div className="h-full rounded-r-xl bg-white border-l border-gray-200 shadow-sm overflow-hidden flex flex-col">
-      <div className="px-4 py-4 border-b border-gray-300">
+    <div className="h-screen rounded-r-xl bg-white shadow-sm overflow-hidden flex flex-col">
+      <div className="px-3 py-3 border-b border-gray-300">
         <div className="flex items-center gap-2">
-          <FaDatabase className="h-5 w-5 text-orange-400" />
-          <h3 className="text-lg text-gray-900 font-semibold">
+         <Image src="/icon.png" alt="Database Icon" width={20} height={20} />
+          <h3 className="text-base text-gray-900 font-semibold">
             Saved Databases
           </h3>
         </div>
@@ -128,35 +129,23 @@ const DbSidebar = () => {
 
       <ScrollArea className="flex-1 px-4 py-4">
         {loading ? (
-          <div className="space-y-2">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="rounded-lg border border-gray-200 bg-gray-100 p-3"
-              >
-                <div className="flex items-center gap-3">
-                  <Skeleton className="h-8 w-8 rounded-md bg-gray-300 shrink-0" />
-                  <Skeleton className="h-4 flex-1 bg-gray-300" />
-                </div>
-              </div>
-            ))}
-          </div>
+          <DbSidebarSkeleton/>
         ) : databases.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <FaDatabase className="h-12 w-12 text-gray-300 mb-3" />
-            <p className="text-sm text-gray-500 font-medium">
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <FaDatabase className="h-10 w-10 text-gray-300 mb-2" />
+            <p className="text-xs text-gray-500 font-medium">
               No databases saved
             </p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-[11px] text-gray-400 mt-0.5">
               Add a database to get started
             </p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {databases.map((db) => (
               <div
                 key={db.id}
-                className={`relative cursor-pointer transition-all border rounded-lg p-3 overflow-hidden group
+                className={`relative cursor-pointer transition-all border rounded-lg p-2 overflow-hidden group
                   border-gray-200 bg-white hover:border-gray-300
                 `}
                 onClick={() => setSelectedDb(db.id)}
@@ -171,10 +160,10 @@ const DbSidebar = () => {
                   }`}
                 />
 
-                <div className="relative flex items-center gap-3">
-                  <div className="flex items-center gap-2">
+                <div className="relative flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <div
-                      className={`w-3 h-3 min-w-3 min-h-3 rounded-full ${
+                      className={`w-2.5 h-2.5 min-w-2.5 min-h-2.5 rounded-full ${
                         connectedDatabase?.databaseId === db.id
                           ? "bg-green-500"
                           : "bg-gray-400"
@@ -190,7 +179,7 @@ const DbSidebar = () => {
                     )}
                   </div>
 
-                  <p className="font-semibold text-gray-900 text-sm truncate">
+                  <p className="font-semibold text-gray-900 text-xs truncate">
                     {db.dbName} | {db.source.toUpperCase()}
                   </p>
                 </div>

@@ -1,5 +1,9 @@
-export default function Home() {
+import { redirect } from "next/navigation"
+
+const page = () => {
   return (
-    <div>Hello</div>
-  );
+    redirect("/dashboard")
+  )
 }
+
+export default page

@@ -1,8 +1,11 @@
+"use client"
+
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AppHeader } from "@/components/app-header"
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
 import DbSidebar from "@/components/dashboard/db-sidebar"
+import AuthGuard from "@/components/auth-guard"
 
 export default function DashboardLayout({
   children,
@@ -10,6 +13,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
+    <AuthGuard>
     <SidebarProvider style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
@@ -30,11 +34,12 @@ export default function DashboardLayout({
           
           <ResizableHandle withHandle className="text-orange-500" />
           
-          <ResizablePanel defaultSize={20} minSize={16} maxSize={25}>
+          <ResizablePanel defaultSize={21} minSize={16} maxSize={21}>
             <DbSidebar />
           </ResizablePanel>
         </ResizablePanelGroup>
       </SidebarInset>
     </SidebarProvider>
+    </AuthGuard>
   )
 }

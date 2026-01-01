@@ -6,6 +6,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useDatabaseStore } from "@/store/useDatabaseStore";
 import { FiGithub } from "react-icons/fi";
 import Image from "next/image";
+import DisconnectDatabase from "@/components/dashboard/disconnect-database";
 
 export function AppHeader() {
   const { connectedDatabase } = useDatabaseStore();
@@ -61,6 +62,7 @@ export function AppHeader() {
         )}
 
         <div className="ml-auto flex items-center gap-2">
+          <DisconnectDatabase />
           <Button size="sm" className="hidden sm:flex gap-2 ">
           <FiGithub size={16}/>
           <a

@@ -23,3 +23,6 @@ export const getActiveDatabase = () =>
 
 export const ask = (data: any) => 
     api.post("/chat/ask", data);
+
+export const disconnectDatabase = (data: any) => 
+    api.post("/database/disconnect-database", data);

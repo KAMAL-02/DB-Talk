@@ -76,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5! mb-1 mx-2 hover:bg-zinc-900"
             >
-              <Link href="/">
+              <Link href="/dashboard">
                 <Logo textSize="text-xl" iconSize={32} />
               </Link>
             </SidebarMenuButton>

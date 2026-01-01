@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SiTestcafe } from "react-icons/si";
 import { IoWifiSharp } from "react-icons/io5";
@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldContent, FieldError } from "@/components/ui/field";
@@ -69,10 +70,12 @@ const databaseSchema = z.discriminatedUnion("mode", [
         port: z
           .number()
           .min(1, "Port must be a valid number")
-          .max(65535, "Port must be between 1 and 65535"),
+          .max(65535, "Port must be between 1 and 65535")
+          .optional(),
         database: z.string().min(1, "Database name is required"),
         username: z.string().optional(),
         password: z.string().optional(),
+        ssl: z.boolean().optional(),
       })
       .refine((data) => {
         return true;
@@ -105,6 +108,7 @@ export function AddDatabaseModal({
     handleSubmit,
     reset,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<DatabaseFormData>({
     resolver: zodResolver(databaseSchema),
@@ -113,10 +117,11 @@ export function AddDatabaseModal({
       mode: "parts",
       dbCredentials: {
         host: "",
-        port: 0,
+        port: undefined,
         database: "",
         username: "",
         password: "",
+        ssl: false,
       },
     } as DatabaseFormData,
   });
@@ -128,6 +133,10 @@ export function AddDatabaseModal({
 
   const onSubmit = async (data: DatabaseFormData) => {
     try {
+      if (data.mode === "parts" && !data.dbCredentials.port) {
+        data.dbCredentials.port = data.source === "postgres" ? 5432 : 27017;
+      }
+      
       console.log("Form data:", data);
       console.log("Action:", submitAction);
 
@@ -318,7 +327,7 @@ export function AddDatabaseModal({
                         aria-invalid={!!errors.dbCredentials}
                         className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                         {...register("dbCredentials.port", {
-                          valueAsNumber: true,
+                          setValueAs: (v) => v === "" || v === null || v === undefined ? undefined : parseInt(v),
                         })}
                       />
                       <FieldError
@@ -411,6 +420,33 @@ export function AddDatabaseModal({
                     />
                   </FieldContent>
                 </Field>
+
+                <div className="flex items-center space-x-2">
+                <Controller
+                  name="dbCredentials.ssl"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      id="ssl"
+                      checked={field.value}
+                      className="border-gray-400"
+                      onCheckedChange={(checked) => {
+                        field.onChange(checked === true);
+                      }}
+                    />
+                  )}
+                />
+                <Label
+                  htmlFor="ssl"
+                  className="text-gray-700 cursor-pointer font-normal"
+                >
+                  Enable SSL{" "}
+                  <span className="text-xs text-gray-500">
+                    (Enable if your database requires SSL/TLS connection)
+                  </span>
+                </Label>
+                </div>
+
               </TabsContent>
 
               <TabsContent value="url" className="space-y-4 mt-4">

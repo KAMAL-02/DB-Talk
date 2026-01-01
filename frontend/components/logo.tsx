@@ -1,4 +1,5 @@
 import { FaDatabase } from "react-icons/fa";
+import Image from "next/image";
 import clsx from "clsx";
 
 type LogoProps = {
@@ -27,7 +28,7 @@ const Logo = ({
         className
       )}
     >
-      <FaDatabase size={iconSize} />
+      <Image src="/icon.png" alt="Logo Icon" width={iconSize} height={iconSize} />
       {showText && <span className={textSize}>- TALK</span>}
     </div>
   );

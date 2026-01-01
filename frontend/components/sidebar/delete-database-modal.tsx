@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
 import useApi from "@/hooks/useApi";
@@ -21,6 +20,7 @@ import { listDatabase, deleteDatabase } from "@/lib/api";
 import { useDatabaseStore } from "@/store/useDatabaseStore";
 import { notifySuccess, notifyError } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
+import { DeleteDbModalSkeleton } from "@/components/skeletons";
 
 interface Database {
   id: string;
@@ -157,28 +157,7 @@ export function DeleteDatabaseModal({
 
         <ScrollArea className="flex-1 pr-4">
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <Card
-                  key={i}
-                  className="relative border border-gray-200 bg-gray-50 rounded-lg"
-                >
-                  <CardContent className="p-3">
-                    <div className="absolute top-3 right-3">
-                      <Skeleton className="h-5 w-5 rounded-sm bg-gray-300" />
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <Skeleton className="h-8 w-8 rounded-md bg-gray-300 shrink-0" />
-                      <div className="flex-1 min-w-0 space-y-2">
-                        <Skeleton className="h-4 w-32 bg-gray-300" />
-                        <Skeleton className="h-3 w-24 bg-gray-300" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <DeleteDbModalSkeleton />
           ) : databases.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <p className="text-sm text-gray-500 font-medium">
@@ -205,7 +184,12 @@ export function DeleteDatabaseModal({
                       <Checkbox
                         checked={selectedDatabases.has(db.id)}
                         onCheckedChange={() => toggleDatabaseSelection(db.id)}
-                        className="h-5 w-5"
+                        className="h-5 w-5
+                        border border-gray-400
+                      bg-white
+                      data-[state=checked]:bg-red-600
+                      data-[state=checked]:border-red-500
+                      data-[state=checked]:text-red-500"
                       />
 
                       <div className="shrink-0">
@@ -245,8 +229,8 @@ export function DeleteDatabaseModal({
                     border border-gray-400
                     bg-white
                     data-[state=checked]:bg-red-600
-                    data-[state=checked]:border-zinc-900
-                    data-[state=checked]:text-black
+                    data-[state=checked]:border-red-500
+                    data-[state=checked]:text-red-500
                 "
             />
             <Label
@@ -260,10 +244,9 @@ export function DeleteDatabaseModal({
 
           <DialogFooter className="gap-2">
             <Button
-              variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isDeleting}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="border-gray-300 text-gray-700 hover:text-gray-8000"
             >
               Cancel
             </Button>

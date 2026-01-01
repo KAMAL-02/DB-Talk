@@ -65,10 +65,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5! mb-1 mx-2 hover:bg-zinc-900"
+              className="data-[slot=sidebar-menu-button]:p-1! mb-0.5 mx-2 hover:bg-zinc-900"
             >
               <Link href="/">
-                <Logo textSize="text-xl" iconSize={32} />
+                <Logo textSize="text-lg" iconSize={24} />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
