@@ -43,4 +43,11 @@ export const databaseRoutes = async (app: FastifyInstance) => {
   }, 
     database.getActiveDatabaseHandler
   );
+
+  app.post<{Body: connectDb}>("/disconnect-database", {
+    preHandler: app.authenticate,
+    schema: connectDbSchema  // both connect and disconnect use databaseId so here reusing that schema
+  }, 
+    database.disconnectDatabaseHandler
+  );
 };

@@ -22,6 +22,7 @@ export const databaseCredentialsSchema: FastifySchema = {
           username: { type: "string" },
           password: { type: "string" },
           database: { type: "string" },
+          ssl: { type: "boolean" },
         },
         additionalProperties: false,
       },

@@ -9,7 +9,7 @@ declare module 'fastify' {
 }
 
 export const config: AppConfig = {
-    PORT: Number(process.env.PORT) || 3000,
+    PORT: Number(process.env.PORT) || 3001,
     AI_API_KEY: process.env.AI_API_KEY || '',
     ENV: process.env.ENV || 'development',
     ADMIN_EMAIL: process.env.ADMIN_EMAIL || '',

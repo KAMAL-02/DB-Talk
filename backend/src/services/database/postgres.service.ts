@@ -3,7 +3,7 @@ import type { QueryResult } from "pg";
 import type { testPostgresCredential, NormalizedSchema, SQLExecutionResult } from "../../types.js";
 import { buildConnectionConfig } from "../../utils/cred.util.js";
 import { pgIntrospectionQueries } from "../../utils/introspection.util.js";
-import { dangerousKeywords, STOP_WORDS } from "../../utils/constant.util.js";
+import { dangerousKeywords, STOP_WORDS, semanticHints } from "../../utils/constant.util.js";
 
 const pools = new Map<string, Pool>();
 
@@ -41,7 +41,7 @@ export const createPgPool = ( databaseId: string, connectionConfig: any ) => {
     ...connectionConfig,
     max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    connectionTimeoutMillis: 10000,
   });
 
   pools.set(databaseId, newPool);
@@ -65,6 +65,8 @@ export const closePgPool = async (databaseId: string) => {
   if (pool) {
     await pool.end();
     pools.delete(databaseId);
+  }else{
+    throw new Error("No active pool found for the given database");
   }
 };
 
@@ -145,7 +147,6 @@ export const pruneSchema = async ( cachedSchema: NormalizedSchema, message: stri
   const messageLower = message.toLowerCase();
 
   // Remove stop words & noise
-
   const words = messageLower
     .split(/\s+/)
     .map((w) => w.replace(/[^a-z]/g, ""))
@@ -202,14 +203,6 @@ export const pruneSchema = async ( cachedSchema: NormalizedSchema, message: stri
       }
     }
 
-    // Semantic table hints
-    const semanticHints: Record<string, string[]> = {
-      user: ["user", "users", "account", "profile", "member", "customer"],
-      order: ["order", "orders", "purchase", "transaction"],
-      product: ["product", "item"],
-      payment: ["payment", "billing"],
-    };
-
     for (const [key, hints] of Object.entries(semanticHints)) {
       if (tableNameLower.includes(key)) {
         for (const hint of hints) {
@@ -223,9 +216,7 @@ export const pruneSchema = async ( cachedSchema: NormalizedSchema, message: stri
     }
   }
 
-  /**
-   * Dont return full schema due to LLM context limits
-   */
+  // Dont return full schema due to LLM context limits
   if (tableScores.size === 0) {
     return {
       source: schema.source,

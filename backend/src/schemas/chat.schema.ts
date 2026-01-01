@@ -6,7 +6,7 @@ export const chatSchema: FastifySchema = {
         required: ["databaseId", "message"],
         properties: {
             databaseId: { type: "string" },
-            message: { type: "string", minLength: 1 }
+            message: { type: "string", minLength: 1, maxLength: 300 },
         }
     }
 }

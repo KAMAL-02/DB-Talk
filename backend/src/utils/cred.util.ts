@@ -15,6 +15,7 @@ export const buildConnectionConfig = (cred: any) => {
         user: cred.dbCredentials.username,
         password: cred.dbCredentials.password,
         database: cred.dbCredentials.database,
+        ssl: cred.dbCredentials.ssl ? { rejectUnauthorized: false } : false,
       };
     } else {
       throw new Error("Unsupported connection mode for Postgres");

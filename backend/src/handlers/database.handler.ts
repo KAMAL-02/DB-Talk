@@ -338,3 +338,33 @@ export const getActiveDatabaseHandler: RouteHandler<any> = async (request, reply
       .send({ success: false, error: "Error fetching active database" });
   }
 };
+
+export const disconnectDatabaseHandler: RouteHandler<{Body: connectDb}> = async (request, reply) => {
+  const { databaseId } = request.body;
+
+  try {
+    const activeDbId = await postgresService.getActivePgPoolDatabaseId();
+    if (activeDbId !== databaseId) throw new Error("The database is not currently connected to server");
+
+    await postgresService.closePgPool(databaseId);
+    await redisService.clearCachedSchema(request.server.redis, databaseId);
+
+    return reply
+      .status(200)
+      .send({ success: true, message: "Database disconnected successfully" });
+
+  } catch (error) {
+    request.server.log.error(error, "Error disconnecting from database");
+    if (error instanceof Error) {
+      return reply
+        .status(500)
+        .send({
+          success: false,
+          error: error.message ?? "Error disconnecting from database",
+        });
+    }
+    return reply
+      .status(500)
+      .send({ success: false, error: "Error disconnecting from database" });
+  }
+}
