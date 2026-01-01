@@ -50,24 +50,30 @@ Get DB-Talk up and running on your machine in seconds!
 docker-compose up -d
 ```
 
-That's it! The application will be available at:
+The application will be available at:
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:3001
 
-For detailed setup instructions, including environment configuration and troubleshooting, see [SETUP.md](SETUP.md).
+For detailed setup instructions, including environment configuration see [Setup.md](Setup.md).
 
-## 🛠️ Development
+## Contribution
 
 Want to contribute? Here's how:
 
-### Backend Development
+### Fork And Clone The Forked Repository
+```bash
+git clone https://github.com/YOUR_USERNAME/DB-Talk.git
+cd DB-Talk
+```
+
+### Run Backend
 ```bash
 cd backend
 pnpm install
 pnpm dev
 ```
 
-### Frontend Development
+### Run Frontend
 ```bash
 cd frontend
 pnpm install
@@ -88,10 +94,10 @@ Contributions are welcome! Feel free to:
 - Submit pull requests
 - Improve documentation
 
-## 📄 License
+## License
 
 ISC
 
-For setup instructions and troubleshooting, see [SETUP.md](SETUP.md).
+For setup instructions and troubleshooting, see [Setup.md](Setup.md).
 
 ---

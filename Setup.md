@@ -1,8 +1,8 @@
-# 🚀 DB-Talk Setup Guide
+# DB-Talk Setup Guide
 
 Complete guide to set up and run DB-Talk on your local machine using Docker Compose.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Installation Steps](#installation-steps)
