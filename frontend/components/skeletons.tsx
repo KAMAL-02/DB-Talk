@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { CardContent, Card } from "./ui/card";
 import { Avatar } from "@/components/ui/avatar";
-import { FaDatabase } from "react-icons/fa";
+import Image from "next/image";
 
 const DashboardSkeleton = () => {
   return (
@@ -162,29 +162,34 @@ const DbSidebarSkeleton = () => {
 
 const ResponseChatBoxSkeleton = () => {
   return (
-    <div className="flex items-start gap-3 mb-6 justify-start">
-      <Avatar className="h-8 w-8 bg-linear-to-br from-orange-500 to-orange-600 text-white flex items-center justify-center shrink-0">
-        <FaDatabase size={16} />
-      </Avatar>
-      
-      <div className="flex flex-col gap-1 max-w-[80%] min-w-150">
-        <div className="relative bg-linear-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-lg rounded-bl-none shadow-lg px-4 py-4">
-          <div className="absolute bottom-0 left-0 w-0 h-0 border-t-12 border-t-gray-800 border-r-12 border-r-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-0 h-0 border-t-13 border-t-gray-700 border-r-13 border-r-transparent -z-10"></div>
+    <div className="flex items-start gap-2 mb-4 justify-start">
+      {/* Avatar */}
+      <div className="h-7 w-7 rounded-md bg-white border border-zinc-200 flex items-center justify-center shrink-0 shadow-sm">
+        <Image src="/icon.png" alt="Bot Icon" width={16} height={16} />
+      </div>
 
-          <div className="grid w-full grid-cols-2 gap-1 bg-gray-800/50 border border-gray-700 rounded-md p-1 mb-3">
-            <Skeleton className="h-8 bg-gray-700" />
-            <Skeleton className="h-8 bg-gray-700" />
+      <div className="flex flex-col gap-0.5 max-w-[75%] min-w-150">
+        <div className="relative bg-linear-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-lg rounded-bl-none shadow-lg px-3 py-3">
+          
+          {/* bubble tail */}
+          <div className="absolute bottom-0 left-0 w-0 h-0 border-t-10 border-t-gray-800 border-r-10 border-r-transparent" />
+          <div className="absolute bottom-0 left-0 w-0 h-0 border-t-11 border-t-gray-700 border-r-11 border-r-transparent -z-10" />
+
+          {/* Tabs skeleton */}
+          <div className="grid w-full grid-cols-2 bg-gray-800/50 border border-gray-700 h-8 rounded-md p-1 mb-2 gap-1">
+            <Skeleton className="h-6 bg-gray-700" />
+            <Skeleton className="h-6 bg-gray-700" />
           </div>
 
-          <div className="mb-3 space-y-2">
-            <Skeleton className="h-4 w-full bg-gray-700" />
-            <Skeleton className="h-4 w-5/6 bg-gray-700" />
-            <Skeleton className="h-4 w-4/6 bg-gray-700" />
+          {/* Explanation skeleton */}
+          <div className="space-y-2 mb-2">
+            <Skeleton className="h-3 w-full bg-gray-700" />
+            <Skeleton className="h-3 w-5/6 bg-gray-700" />
           </div>
 
+          {/* Card skeleton */}
           <Card className="bg-gray-950 border-gray-700">
-            <CardContent className="p-4 space-y-2">
+            <CardContent className="p-3 space-y-2">
               <Skeleton className="h-3 w-full bg-gray-800" />
               <Skeleton className="h-3 w-4/5 bg-gray-800" />
               <Skeleton className="h-3 w-3/5 bg-gray-800" />
@@ -192,16 +197,18 @@ const ResponseChatBoxSkeleton = () => {
             </CardContent>
           </Card>
 
-          <div className="flex items-center gap-4 mt-3">
+          {/* stats skeleton */}
+          <div className="flex items-center gap-3 mt-2">
+            <Skeleton className="h-3 w-14 bg-gray-700" />
             <Skeleton className="h-3 w-16 bg-gray-700" />
-            <Skeleton className="h-3 w-20 bg-gray-700" />
           </div>
         </div>
 
-        <Skeleton className="h-3 w-12 bg-gray-300 ml-2" />
+        {/* timestamp */}
+        <Skeleton className="h-[10px] w-12 bg-gray-600 ml-1.5 mt-1" />
       </div>
     </div>
   );
-}
+};
 
 export { DashboardSkeleton, DeleteDbModalSkeleton, DbSidebarSkeleton, ResponseChatBoxSkeleton };
