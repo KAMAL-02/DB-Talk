@@ -46,7 +46,8 @@ export function DeleteDatabaseModal({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const triggerRefresh = useDatabaseStore((state) => state.triggerRefresh);
+  // const triggerRefresh = useDatabaseStore((state) => state.triggerRefresh);
+  const { clearConnectedDatabase, triggerRefresh, connectedDatabase } = useDatabaseStore();
   const { handleRequest: callListDatabases } = useApi(listDatabase);
   const { handleRequest: callDeleteDatabase } = useApi(deleteDatabase);
 
@@ -110,7 +111,9 @@ export function DeleteDatabaseModal({
           databaseIds.length > 1 ? "s" : ""
         }`
       );
-
+      if(connectedDatabase && databaseIds.includes(connectedDatabase.databaseId)) {
+        clearConnectedDatabase();
+      }
       setSelectedDatabases(new Set());
       setConfirmDelete(false);
       onOpenChange(false);

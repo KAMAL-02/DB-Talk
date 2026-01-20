@@ -131,6 +131,54 @@ export function AddDatabaseModal({
     setValue("mode", connectionMethod);
   }, [selectedDb, connectionMethod, setValue]);
 
+  // Reset all state when modal opens/closes
+  useEffect(() => {
+    if (!open) {
+      reset({
+        source: "postgres",
+        mode: "parts",
+        dbCredentials: {
+          host: "",
+          port: undefined,
+          database: "",
+          username: "",
+          password: "",
+          ssl: false,
+        },
+      } as DatabaseFormData);
+      setSelectedDb("postgres");
+      setConnectionMethod("parts");
+      setDatabaseId(null);
+      setDbName("");
+    }
+  }, [open, reset]);
+
+  // Update form structure when switching between connection methods
+  useEffect(() => {
+    if (connectionMethod === "url") {
+      reset({
+        source: selectedDb,
+        mode: "url",
+        dbCredentials: {
+          connectionString: "",
+        },
+      } as DatabaseFormData);
+    } else {
+      reset({
+        source: selectedDb,
+        mode: "parts",
+        dbCredentials: {
+          host: "",
+          port: undefined,
+          database: "",
+          username: "",
+          password: "",
+          ssl: false,
+        },
+      } as DatabaseFormData);
+    }
+  }, [connectionMethod, selectedDb, reset]);
+
   const onSubmit = async (data: DatabaseFormData) => {
     try {
       if (data.mode === "parts" && !data.dbCredentials.port) {
@@ -164,8 +212,6 @@ export function AddDatabaseModal({
         const response = await callSaveDatabase(savePayload);
         console.log("Save response:", response);
         notifySuccess("Database added successfully");
-        reset();
-        setDbName("");
         onOpenChange(false);
         triggerRefresh();
       }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -23,6 +24,8 @@ import { Spinner } from "../ui/spinner";
 import { login } from "@/lib/api";
 import useApi from "@/hooks/useApi";
 import { useRouter } from "next/navigation";
+import { FaRegEye } from "react-icons/fa";
+import { FaRegEyeSlash } from "react-icons/fa";
 
 const authSchema = z.object({
   email: z
@@ -35,6 +38,7 @@ const authSchema = z.object({
 type AuthFormData = z.infer<typeof authSchema>;
 
 const AuthForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
 
   const { handleRequest: callLoginApi } = useApi(login);
   const router = useRouter();
@@ -93,14 +97,28 @@ const AuthForm = () => {
           <Field>
             <FieldLabel htmlFor="password" className="dark:text-gray-900">Password</FieldLabel>
             <FieldContent>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                aria-invalid={!!errors.password}
-                className="dark:bg-white dark:border-gray-300 dark:text-gray-900 dark:placeholder:text-gray-500"
-                {...register("password")}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  aria-invalid={!!errors.password}
+                  className="dark:bg-white dark:border-gray-300 dark:text-gray-900 dark:placeholder:text-gray-500 pr-10"
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-600 dark:hover:text-gray-800"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <FaRegEyeSlash className="h-4 w-4" />
+                  ) : (
+                    <FaRegEye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
               <FieldError
                 errors={[errors.password]}
                 className="text-left text-xs"

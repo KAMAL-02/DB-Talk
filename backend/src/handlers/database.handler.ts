@@ -273,6 +273,7 @@ export const deleteDbHandler: RouteHandler<{ Body: { databaseIds: string[] };}> 
 
     for (const dbId of databaseIds) {
       await redisService.clearCachedSchema(request.server.redis, dbId);
+      await postgresService.closePgPool(dbId);
     }
 
     return reply
@@ -327,7 +328,7 @@ export const getActiveDatabaseHandler: RouteHandler<any> = async (request, reply
     request.server.log.error(error, "Error fetching active database");
     if (error instanceof Error) {
       return reply
-        .status(500)
+        .status(404)
         .send({
           success: false,
           error: error.message ?? "Error fetching active database",

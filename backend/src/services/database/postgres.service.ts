@@ -62,12 +62,11 @@ export const getPgPool = (databaseId: string): Pool | undefined => {
 
 export const closePgPool = async (databaseId: string) => {
   const pool = pools.get(databaseId);
-  if (pool) {
+  if(!pool){
+    return;
+  }
     await pool.end();
     pools.delete(databaseId);
-  }else{
-    throw new Error("No active pool found for the given database");
-  }
 };
 
 export const getActivePgPoolDatabaseId = async () => {
