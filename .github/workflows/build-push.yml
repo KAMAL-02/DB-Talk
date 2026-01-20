@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     branches:
-      - feat/CI
+      - main
     paths-ignore:
       - docker-compose.yml
 
@@ -122,5 +122,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add docker-compose.yml
-          git commit -m "ci: update images ${IMAGE_TAG}" || echo "No changes"
+          git commit -m "SYSTEM: update images ${IMAGE_TAG}" || echo "No changes"
           git push
