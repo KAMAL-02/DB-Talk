@@ -94,7 +94,7 @@ jobs:
 
   update-compose:
     runs-on: ubuntu-latest
-    needs: [detect-changes, frontend, backend]
+    needs: [detect-changes]
 
     # run if at least one changed
     if: |
