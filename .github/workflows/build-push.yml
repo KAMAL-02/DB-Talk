@@ -1,5 +1,8 @@
 name: Build and Push DB-Talk
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
