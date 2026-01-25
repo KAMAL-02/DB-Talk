@@ -232,7 +232,7 @@ const disconnectDatabase = async ({
 };
 
 /** It takes active databaseId, gets source and executes the query on active pool */
-const executeQuery = async (databaseId: string, query: string, db: any) => {
+const executeQuery = async (databaseId: string, response: any, db: any) => {
   // Fetch database record
   const records = await db
     .select()
@@ -258,7 +258,7 @@ const executeQuery = async (databaseId: string, query: string, db: any) => {
   }
 
   // Execute query through the adapter
-  const result = await adapter.executeQuery(query, activePool);
+  const result = await adapter.executeQuery(response, activePool);
   return result;
 };
 
