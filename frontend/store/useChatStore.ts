@@ -3,12 +3,13 @@ import { create } from "zustand";
 interface ExecutionResult {
   success: boolean;
   data: any[];
-  rowCount: number;
+  count: number;
   executionTime: number;
 }
 
 interface ResponseData {
-  sql: string;
+  query?: string | any[];
+  type?: string;
   explanation: string;
   executionResult: ExecutionResult;
 }
@@ -52,7 +53,7 @@ export const useChatStore = create<ChatStore>((set) => ({
 //           { id: 1, name: "Alice", email: "alice@test.com", ids: 1, names: "Alice", emails: "alice@test.com", idss: 1, namess: "Alice", emailss: "alice@test.com",idsss: 1, namesss: "Alice", emailsss: "alice@test.com", idssss: 1, namesssss: "Alice", emailssss: "alice@test.com", idsssss: 1, namessssss: "Alice", emailsssss: "alice@test.com" },
 //           { id: 2, name: "Bob", email: "bob@test.com", ids: 1, names: "Alice", emails: "alice@test.com", idss: 1, namess: "Alice", emailss: "alice@test.com" },
 //         ],
-//         rowCount: 2,
+//         count: 2,
 //         executionTime: 12,
 //       },
 //     },
@@ -77,7 +78,7 @@ export const useChatStore = create<ChatStore>((set) => ({
 //           id: i + 1,
 //           amount: 100 + i * 10,
 //         })),
-//         rowCount: 10,
+//         count: 10,
 //         executionTime: 18,
 //       },
 //     },
@@ -99,7 +100,7 @@ export const useChatStore = create<ChatStore>((set) => ({
 //       executionResult: {
 //         success: true,
 //         data: [{ count: 42 }],
-//         rowCount: 1,
+//         count: 1,
 //         executionTime: 9,
 //       },
 //     },
