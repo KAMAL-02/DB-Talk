@@ -24,8 +24,8 @@ import { DeleteDbModalSkeleton } from "@/components/skeletons";
 
 interface Database {
   id: string;
-  source: "postgres" | "mongo";
-  mode: "url" | "parts";
+  source: string;
+  mode: "url" | "parameters";
   dbName: string;
 }
 

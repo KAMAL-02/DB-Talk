@@ -9,7 +9,7 @@ import Image from "next/image";
 interface ExecutionResult {
   success: boolean;
   data: any[];
-  rowCount: number;
+  count: number;
   executionTime: number;
 }
 
@@ -45,13 +45,13 @@ export function ResponseChatBox({ data, timestamp }: ResponseInputProps) {
                 value="results"
                 className="text-gray-300 data-[state=active]:bg-gray-700 data-[state=active]:text-white text-xs"
               >
-                Results ({executionResult.rowCount})
+                Results
               </TabsTrigger>
               <TabsTrigger
                 value="query"
                 className="text-gray-300 data-[state=active]:bg-gray-700 data-[state=active]:text-white text-xs"
               >
-                SQL Query
+                Query
               </TabsTrigger>
             </TabsList>
 
@@ -106,7 +106,9 @@ export function ResponseChatBox({ data, timestamp }: ResponseInputProps) {
                                     className="px-3 py-1.5 text-gray-100 whitespace-nowrap"
                                   >
                                     {value !== null && value !== undefined
-                                      ? String(value)
+                                      ? typeof value === "object"
+                                        ? JSON.stringify(value, null, 2)
+                                        : String(value)
                                       : "-"}
                                   </td>
                                 ))}
@@ -129,7 +131,7 @@ export function ResponseChatBox({ data, timestamp }: ResponseInputProps) {
               <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
                 <div className="flex items-center gap-1">
                   <Database className="h-3 w-3" />
-                  <span>{executionResult.rowCount} rows</span>
+                  <span>{executionResult.count} rows</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
