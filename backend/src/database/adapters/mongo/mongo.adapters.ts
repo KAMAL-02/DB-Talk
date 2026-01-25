@@ -69,7 +69,20 @@ export const mongoAdapter: DatabaseAdapter = {
     }
   },
 
-  async verifyConnection(pool: any): Promise<any> {},
+  async verifyConnection(client: MongoClient): Promise<void> {
+  try {
+    // Ping the server
+    const result = await client.db().command({ ping: 1 });
+    if (!result || result.ok !== 1) {
+      throw new Error("MongoDB ping failed");
+    }
+  } catch (error: any) {
+    throw new Error(
+      `Database verification failed`
+    );
+  }
+},
+
 
   /** Connect to Mongo Database */
   async connect(
@@ -136,6 +149,12 @@ export const mongoAdapter: DatabaseAdapter = {
     /** Fetch collection names */
     const collectionsInfo = await db.listCollections().toArray();
     const collections = collectionsInfo.map((c) => c.name);
+
+    if(collections.length === 0) {
+      /** throw error and delete the db pool */
+      await this.disconnect(databaseId);
+      throw new Error("No collections found in the database");
+    }
 
     /** Get sample documents to infer the schema of the collection */
     const samples: Record<string, any[]> = {};

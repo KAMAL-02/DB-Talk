@@ -120,6 +120,12 @@ export const postgresAdapter: DatabaseAdapter = {
       pool.query(pgIntrospectionQueries.selectForeignKeyQuery),
     ]);
 
+    if(tableRes.rows.length === 0) {
+      /** throw error and delete the db pool */
+      await this.disconnect(databaseId);
+      throw new Error("No tables found in the database");
+    }
+
     const normalizedSchema = normalizeSchema({
       tables: tableRes.rows,
       columns: coloumnRes.rows,
