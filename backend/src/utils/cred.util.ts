@@ -1,3 +1,5 @@
+/** DEPRECATED */
+
 export const buildConnectionConfig = (cred: any) => {
     console.log("Building connection config for credentials:", cred);
   if (cred.source === "postgres") {
@@ -8,7 +10,7 @@ export const buildConnectionConfig = (cred: any) => {
           ? { rejectUnauthorized: false }
           : false,
       };
-    } else if (cred.mode === "parts") {
+    } else if (cred.mode === "parameters") {
       return {
         host: cred.dbCredentials.host,
         port: cred.dbCredentials.port,
@@ -52,7 +54,7 @@ export const extractDbName = (cred: any) => {
     return dbName;
   }
 
-  if (cred.mode === "parts") {
+  if (cred.mode === "parameters") {
     if (!cred.dbCredentials.database) {
       throw new Error("Database name is missing");
     }

@@ -31,15 +31,16 @@ type PostgresUrlCredentials = {
   };
 };
 
-type PostgresPartsCredentials = {
+type PostgresParametersCredentials = {
   source: "postgres";
-  mode: "parts";
+  mode: "parameters";
   dbCredentials: {
     host: string;
     port: number;
     username: string;
     password: string;
     database: string;
+    ssl?: boolean;
   };
 };
 
@@ -51,9 +52,9 @@ type MongoUrlCredentials = {
   connectionString: string;
 };
 
-type MongoPartsCredentials = {
+type MongoParametersCredentials = {
   source: "mongo";
-  mode: "parts";
+  mode: "parameters";
   host: string;
   port: number;
   username?: string;
@@ -63,17 +64,17 @@ type MongoPartsCredentials = {
 
 export type DatabaseCredentialsBody =
   | PostgresUrlCredentials
-  | PostgresPartsCredentials
+  | PostgresParametersCredentials
   | MongoUrlCredentials
-  | MongoPartsCredentials;
+  | MongoParametersCredentials;
 
 export type testPostgresCredential =
   | PostgresUrlCredentials
-  | PostgresPartsCredentials;
+  | PostgresParametersCredentials;
 
 export type saveDbCredentials = {
-  source: "postgres" | "mongo";
-  mode: "url" | "parts";
+  source: string;
+  mode: "url" | "parameters";
   dbName: string;
   databaseId: string;
 };
@@ -84,34 +85,68 @@ export type connectDb = {
 
 export type NormalizedSchema = {
   source: string;
-  tables: {
-    [tableName: string]: {
-      columns: {
-        name: string;
-        type: string;
-        nullable: boolean;
-        isPrimaryKey: boolean;
-        foreignKey?: {
-          referencesTable: string;
-          referencesColumn: string;
-        };
-      }[];
-    };
-  };
+
+  tables: Record<
+    string,
+    {
+      columns: NormalizedColumn[];
+      primaryKey?: string[];
+      indexes?: NormalizedIndex[];
+    }
+  >;
 };
+
+export type NormalizedColumn = {
+  name: string;
+  type: string;
+  nullable: boolean;
+  position?: number;
+  isPrimaryKey: boolean;
+  foreignKeys?: NormalizedForeignKey[];
+};
+
+export type NormalizedForeignKey = {
+  referencesTable: string;
+  referencesColumn: string;
+};
+
+export type NormalizedIndex = {
+  name: string;
+  columns: string[];
+  unique: boolean;
+};
+
 export interface ChatBody {
   databaseId: string;
   message: string;
 }
 
-export interface SQLExecutionResult {
+export interface ExecutionResult {
   success: boolean;
   data?: any[];
-  rowCount?: number;
+  count?: number;
   error?: string;
   executionTime?: number;
 }
 
 export interface DeleteDb {
   databaseIds: string[];
+}
+
+export interface DatabaseAdapter {
+  buildConnectionConfig(payload: any): any;
+  testConnection(payload:any): Promise<void>;
+  verifyConnection(pool: PoolInstance): Promise<any>;
+  connect(databaseId: string, connectionConfig: any): Promise<any>;
+  disconnect(databaseId: string): Promise<void>;
+  introspectSchema(databaseId: string): Promise<any>;
+  executeQuery(query: string, pool: PoolInstance): Promise<ExecutionResult>;
+}
+
+export type PoolInstance = unknown;
+
+export interface AskResponse {
+  query: string;
+  explanation: string;
+  executionResult: ExecutionResult;
 }

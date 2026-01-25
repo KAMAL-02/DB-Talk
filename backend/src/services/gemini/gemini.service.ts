@@ -1,15 +1,13 @@
 import type { GenerativeModel } from "@google/generative-ai";
 import type { NormalizedSchema } from "../../types.js";
-import { buildUserPrompt, buildSchemaDescription } from "./prompts.service.js";
+import { buildUserPrompt } from "./prompts.service.js";
 
-export const generateSQLFromQuery = async (
+export const generateQuery = async (
   model: GenerativeModel,
   userQuery: string,
-  schema: NormalizedSchema
-): Promise<{ sql: string; explanation: string }> => {
-
-  const schemaDescription = buildSchemaDescription(schema);
-  const userPrompt = buildUserPrompt(schemaDescription, userQuery);
+  schema: NormalizedSchema,
+): Promise<{ query: string; explanation: string }> => {
+  const userPrompt = buildUserPrompt(schema, userQuery);
 
   try {
     const result = await model.generateContent(userPrompt);
@@ -19,15 +17,16 @@ export const generateSQLFromQuery = async (
     if (!content) {
       throw new Error("No response from Gemini");
     }
+    console.log("Gemini raw response content:", content);
 
     const parsed = JSON.parse(content);
-    
-    if (!parsed.sql) {
-      throw new Error("Invalid response format: missing SQL query");
+
+    if (!parsed.query) {
+      throw new Error("Invalid response format: missing query");
     }
 
     return {
-      sql: parsed.sql.trim(),
+      query: parsed.query.trim(),
       explanation: parsed.explanation || "No explanation provided",
     };
   } catch (error: any) {

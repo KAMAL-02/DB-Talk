@@ -1,172 +1,51 @@
+/** Schema to determine the http request and http response format */
+
 import type { FastifySchema } from "fastify";
 
 export const databaseCredentialsSchema: FastifySchema = {
   body: {
     type: "object",
-
-    properties: {
-      source: {
-        type: "string",
-        enum: ["postgres", "mongo"],
-      },
-      mode: {
-        type: "string",
-        enum: ["url", "parts"],
-      },
-      dbCredentials: {
-        type: "object",
-        properties: {
-          connectionString: { type: "string" },
-          host: { type: "string" },
-          port: { type: "number" },
-          username: { type: "string" },
-          password: { type: "string" },
-          database: { type: "string" },
-          ssl: { type: "boolean" },
-        },
-        additionalProperties: false,
-      },
-    },
-
     required: ["source", "mode", "dbCredentials"],
 
-    allOf: [
-      /* ---------- POSTGRES / URL ---------- */
-      {
-        if: {
-          type: "object",
-          properties: {
-            source: { const: "postgres" },
-            mode: { const: "url" },
-          },
-        },
-        then: {
-          type: "object",
-          properties: {
-            dbCredentials: {
-              type: "object",
-              required: ["connectionString"],
-              properties: {
-                connectionString: {
-                  type: "string",
-                  pattern: "^postgres(ql)?:\\/\\/",
-                },
-              },
-            },
-          },
-        },
+    properties: {
+      source: { type: "string" },
+      mode: { type: "string" },
+      dbCredentials: {
+        type: "object",
+        additionalProperties: true,
       },
-
-      /* ---------- POSTGRES / PARTS ---------- */
-      {
-        if: {
-          type: "object",
-          properties: {
-            source: { const: "postgres" },
-            mode: { const: "parts" },
-          },
-        },
-        then: {
-          type: "object",
-          properties: {
-            dbCredentials: {
-              type: "object",
-              required: [
-                "host",
-                "port",
-                "username",
-                "password",
-                "database",
-              ],
-            },
-          },
-        },
-      },
-
-      /* ---------- MONGO / URL ---------- */
-      {
-        if: {
-          type: "object",
-          properties: {
-            source: { const: "mongo" },
-            mode: { const: "url" },
-          },
-        },
-        then: {
-          type: "object",
-          properties: {
-            dbCredentials: {
-              type: "object",
-              required: ["connectionString"],
-              properties: {
-                connectionString: {
-                  type: "string",
-                  pattern: "^mongodb(\\+srv)?:\\/\\/",
-                },
-              },
-            },
-          },
-        },
-      },
-
-      /* ---------- MONGO / PARTS ---------- */
-      {
-        if: {
-          type: "object",
-          properties: {
-            source: { const: "mongo" },
-            mode: { const: "parts" },
-          },
-        },
-        then: {
-          type: "object",
-          properties: {
-            dbCredentials: {
-              type: "object",
-              required: ["host", "port", "database"],
-            },
-          },
-        },
-      },
-    ],
+    },
   },
 };
 
-export const saveDbCredsSchema : FastifySchema = {
+export const saveDbCredsSchema: FastifySchema = {
   body: {
     type: "object",
-    properties: {
-      source: {
-        type: "string",
-        enum: ["postgres", "mongo"],
-      },
-      mode: {
-        type: "string",
-        enum: ["url", "parts"],
-      },
-      databaseId: { type: "string" },
-      dbName: { type: "string"}
-    },
     required: ["databaseId", "dbName"],
-  }
-}
 
-export const connectDbSchema : FastifySchema = {
+    properties: {
+      databaseId: { type: "string" },
+      dbName: { type: "string" },
+    },
+  },
+};
+
+export const connectDbSchema: FastifySchema = {
   body: {
     type: "object",
     properties: {
       databaseId: { type: "string" },
     },
     required: ["databaseId"],
-  }
-}
+  },
+};
 
-export const deleteDbSchema : FastifySchema = {
+export const deleteDbSchema: FastifySchema = {
   body: {
     type: "object",
     properties: {
       databaseIds: { type: "array", items: { type: "string" } },
     },
     required: ["databaseIds"],
-  }
-}
+  },
+};
