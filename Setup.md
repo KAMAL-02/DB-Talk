@@ -2,18 +2,6 @@
 
 Complete guide to set up and run DB-Talk on your local machine using Docker Compose.
 
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Installation Steps](#installation-steps)
-- [Environment Configuration](#environment-configuration)
-- [Running the Application](#running-the-application)
-- [Accessing the Application](#accessing-the-application)
-- [Configuration Options](#configuration-options)
-- [Troubleshooting](#troubleshooting)
-- [Stopping the Application](#stopping-the-application)
-- [Advanced Setup](#advanced-setup)
-
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your machine:
@@ -21,9 +9,6 @@ Before you begin, ensure you have the following installed on your machine:
 ### Required Software
 
 1. **Docker Desktop** (or Docker Engine + Docker Compose)
-   - Windows: Download from [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop)
-   - Mac: Download from [Docker Desktop for Mac](https://www.docker.com/products/docker-desktop)
-   - Linux: Install Docker Engine and Docker Compose
    
    Verify installation:
    ```bash
