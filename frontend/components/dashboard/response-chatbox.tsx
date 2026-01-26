@@ -14,7 +14,8 @@ interface ExecutionResult {
 }
 
 interface ResponseData {
-  sql: string;
+  query?: string | any[];
+  type?: string;
   explanation: string;
   executionResult: ExecutionResult;
 }
@@ -25,7 +26,9 @@ interface ResponseInputProps {
 }
 
 export function ResponseChatBox({ data, timestamp }: ResponseInputProps) {
-  const { sql, explanation, executionResult } = data;
+  const { query, type, explanation, executionResult } = data;
+  
+  const isMongoQuery = type === "mongo" || Array.isArray(query);
 
   return (
     <div className="flex items-start gap-2 mb-4 justify-start">
@@ -66,7 +69,9 @@ export function ResponseChatBox({ data, timestamp }: ResponseInputProps) {
               <Card className="bg-gray-950 border-gray-700">
                 <CardContent className="p-3">
                   <pre className="text-[11px] text-green-400 font-mono leading-relaxed overflow-x-auto">
-                    {sql}
+                    {isMongoQuery 
+                      ? JSON.stringify(query, null, 2)
+                      : query}
                   </pre>
                 </CardContent>
               </Card>

@@ -117,6 +117,11 @@ RELATIONSHIP RULES:
 2. If no relationship exists, do NOT assume one.
 3. $lookup must always use localField / foreignField.
 
+COLLECTION SELECTION RULES:
+
+1. You MUST choose exactly one collection from the schema.
+2. The collection name MUST be returned explicitly.
+
 ERROR HANDLING:
 
 If the query cannot be generated safely using the schema,
@@ -129,6 +134,7 @@ return:
 SUCCESS RESPONSE FORMAT:
 
 {
+  "collection": "<collection_name>",
   "query": <aggregation pipeline array>,
   "explanation": "<brief explanation of what the pipeline does>"
 }

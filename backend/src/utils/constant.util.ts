@@ -38,6 +38,14 @@ export const STOP_WORDS = new Set([
   "or",
 ]);
 
+export const BLOCKED_OPERATORS = new Set([
+  "$where",
+  "$function",
+  "$accumulator",
+  "$merge",
+  "$out",
+]);
+
 export const semanticHints: Record<string, string[]> = {
   user: ["user", "users", "account", "profile", "member", "customer"],
   order: ["order", "orders", "purchase", "transaction"],

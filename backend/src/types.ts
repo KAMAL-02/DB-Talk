@@ -140,13 +140,14 @@ export interface DatabaseAdapter {
   connect(databaseId: string, connectionConfig: any): Promise<any>;
   disconnect(databaseId: string): Promise<void>;
   introspectSchema(databaseId: string): Promise<any>;
-  executeQuery(query: string, pool: PoolInstance): Promise<ExecutionResult>;
+  executeQuery(query: any, pool: PoolInstance): Promise<ExecutionResult>;
 }
 
 export type PoolInstance = unknown;
 
 export interface AskResponse {
-  query: string;
+  query: any;
   explanation: string;
   executionResult: ExecutionResult;
+  type: string;
 }

@@ -165,7 +165,7 @@ const DbSidebar = () => {
                     <div
                       className={`w-2.5 h-2.5 min-w-2.5 min-h-2.5 rounded-full ${
                         connectedDatabase?.databaseId === db.id
-                          ? "bg-green-500"
+                          ? "bg-green-400 border border-green-700 animate-pulse"
                           : "bg-gray-400"
                       }`}
                     />

@@ -17,7 +17,6 @@ const ask = async (
   gemini: GenerativeModel,
   db: any,
 ): Promise<AskResponse> => {
-  let generatedQuery: string | undefined;
 
   try {
     // Get cached schema from Redis
@@ -48,21 +47,19 @@ const ask = async (
       throw new Error("Failed to generate query from the provided message.");
     }
 
-    generatedQuery = response.query;
-    console.log("Generated Query:", generatedQuery);
-
     // Execute query through database adapter
     const executionResult = await databaseManager.executeQuery(
       databaseId,
-      generatedQuery,
+      response,
       db,
     );
 
     console.log("Execution Result:", executionResult);
     return {
-      query: generatedQuery,
+      query: response.query,
       explanation: response.explanation,
       executionResult,
+      type: response.type,
     };
   } catch (error: any) {
     console.error("Error in chat.manager.ask:", error);

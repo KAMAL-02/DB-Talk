@@ -6,7 +6,7 @@ export const generateQuery = async (
   model: GenerativeModel,
   userQuery: string,
   schema: NormalizedSchema,
-): Promise<{ query: string; explanation: string }> => {
+): Promise<any> => {
   const userPrompt = buildUserPrompt(schema, userQuery);
 
   try {
@@ -25,10 +25,34 @@ export const generateQuery = async (
       throw new Error("Invalid response format: missing query");
     }
 
-    return {
-      query: parsed.query.trim(),
-      explanation: parsed.explanation || "No explanation provided",
-    };
+    if (schema.source === "postgres") {
+      if (typeof parsed.query !== "string") {
+        throw new Error("Expected SQL query as string");
+      }
+
+      return {
+        type: "sql",
+        query: parsed.query.trim(),
+        explanation: parsed.explanation || "No explanation provided",
+      };
+    }
+
+    if (schema.source === "mongo") {
+      if (!Array.isArray(parsed.query)) {
+        throw new Error("Expected Mongo aggregation pipeline array");
+      }
+
+      if (!parsed.collection) {
+        throw new Error("Missing collection name for Mongo query");
+      }
+
+      return {
+        type: "mongo",
+        collection: parsed.collection,
+        query: parsed.query,
+        explanation: parsed.explanation || "No explanation provided",
+      };
+    }
   } catch (error: any) {
     console.log("Gemini generation error:", error);
     throw error;

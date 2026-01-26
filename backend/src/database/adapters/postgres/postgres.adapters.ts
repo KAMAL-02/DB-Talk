@@ -3,6 +3,7 @@ import type {
   testPostgresCredential,
   PoolInstance,
   ExecutionResult,
+  NormalizedSchema,
 } from "../../../types.js";
 import { Client, Pool, type QueryResult } from "pg";
 import {
@@ -79,7 +80,7 @@ export const postgresAdapter: DatabaseAdapter = {
 
     const existingPool = getPool(databaseId);
     if (existingPool) {
-      throw new Error("The connection pool of this database already exists");
+      throw new Error("The connection of this database already exists");
     }
     if (!connectionConfigParameters) {
       throw new Error("Connection config is required to create a new pool");
@@ -106,7 +107,7 @@ export const postgresAdapter: DatabaseAdapter = {
   },
 
   /** INTROSPECT POSTGRES SCHEMA */
-  async introspectSchema(databaseId: string): Promise<any> {
+  async introspectSchema(databaseId: string): Promise<NormalizedSchema> {
     const pool = getPool<Pool>(databaseId);
     if (!pool) {
       throw new Error("No active connection pool found for this database");
@@ -119,6 +120,12 @@ export const postgresAdapter: DatabaseAdapter = {
       pool.query(pgIntrospectionQueries.selectForeignKeyQuery),
     ]);
 
+    if(tableRes.rows.length === 0) {
+      /** throw error and delete the db pool */
+      await this.disconnect(databaseId);
+      throw new Error("No tables found in the database");
+    }
+
     const normalizedSchema = normalizeSchema({
       tables: tableRes.rows,
       columns: coloumnRes.rows,
@@ -130,10 +137,10 @@ export const postgresAdapter: DatabaseAdapter = {
   },
 
   /** EXECUTE POSTGRES QUERY */
-  async executeQuery(query: string, pool: any): Promise<ExecutionResult> {
+  async executeQuery(response: any, pool: any): Promise<ExecutionResult> {
     const startTime = Date.now();
     try {
-      const cleanSQL = query.trim().replace(/;$/, "");
+      const cleanSQL = response.query.trim().replace(/;$/, "");
       const validatedQuery = validateSQL(cleanSQL);
 
       if (!validatedQuery.isValid) {

@@ -40,8 +40,9 @@ export const clearCachedDbCredentials = async (
   try {
     await redis.del(key);
   } catch (error) {
-    console.error("Error clearing cached schema:", error);
-    throw "Error clearing cached schema";
+    /** keep it silent and dont throw error */
+    console.log("Error clearing cached schema:", error);
+    // throw new Error ("Error clearing cached schema"); 
   }
 };
 
@@ -82,7 +83,8 @@ export const clearCachedSchema = async (
   try {
     await redis.del(key);
   } catch (error) {
+    /** keep it silent and dont throw error */
     console.error("Error clearing cached schema:", error);
-    throw "Error clearing cached schema";
+    // throw "Error clearing cached schema";
   }
 };

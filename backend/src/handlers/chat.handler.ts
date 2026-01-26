@@ -25,9 +25,10 @@ export const askHandler: RouteHandler<{ Body: ChatBody }> = async (
     return reply.status(200).send({
       success: true,
       data: {
-        sql: result.query,
+        query: result.query,
         explanation: result.explanation,
         executionResult: result.executionResult,
+        type: result.type,
       },
     });
   } catch (error: any) {
