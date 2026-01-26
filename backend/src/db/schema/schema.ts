@@ -8,14 +8,13 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
-export const dbSourceEnum = pgEnum("db_source", ["postgres", "mongo"]);
-export const dbModeEnum = pgEnum("db_mode", ["url", "parts"]);
+export const dbModeEnum = pgEnum("db_mode", ["url", "parameters"]);
 
 export const databaseConnections = pgTable(
   "database_connections",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    source: dbSourceEnum("source").notNull(),
+    source: text("source").notNull(),
     mode: dbModeEnum("mode").notNull(),
     dbName: text("db_name").notNull(),
     dbCredentials: jsonb("db_credentials").notNull(),
@@ -25,7 +24,7 @@ export const databaseConnections = pgTable(
   (table) => ({
     uniqDbNamePerSource: uniqueIndex("uniq_dbname_per_source").on(
       table.source,
-      table.dbName
+      table.dbName,
     ),
-  })
+  }),
 );

@@ -60,10 +60,10 @@ const databaseSchema = z.discriminatedUnion("mode", [
         ),
     }),
   }),
-  // Parts mode schema
+  // Parameters mode schema
   z.object({
     source: z.enum(["postgres", "mongo"]),
-    mode: z.literal("parts"),
+    mode: z.literal("parameters"),
     dbCredentials: z
       .object({
         host: z.string().min(1, "Host is required"),
@@ -76,6 +76,7 @@ const databaseSchema = z.discriminatedUnion("mode", [
         username: z.string().optional(),
         password: z.string().optional(),
         ssl: z.boolean().optional(),
+        tls: z.boolean().optional(),
       })
       .refine((data) => {
         return true;
@@ -92,8 +93,8 @@ export function AddDatabaseModal({
   const [selectedDb, setSelectedDb] = useState<"postgres" | "mongo">(
     "postgres"
   );
-  const [connectionMethod, setConnectionMethod] = useState<"url" | "parts">(
-    "parts"
+  const [connectionMethod, setConnectionMethod] = useState<"url" | "parameters">(
+    "parameters"
   );
   const [submitAction, setSubmitAction] = useState<"test" | "save">("test");
   const [databaseId, setDatabaseId] = useState<string | null>(null);
@@ -114,7 +115,7 @@ export function AddDatabaseModal({
     resolver: zodResolver(databaseSchema),
     defaultValues: {
       source: "postgres",
-      mode: "parts",
+      mode: "parameters",
       dbCredentials: {
         host: "",
         port: undefined,
@@ -122,6 +123,7 @@ export function AddDatabaseModal({
         username: "",
         password: "",
         ssl: false,
+        tls: false,
       },
     } as DatabaseFormData,
   });
@@ -136,7 +138,7 @@ export function AddDatabaseModal({
     if (!open) {
       reset({
         source: "postgres",
-        mode: "parts",
+        mode: "parameters",
         dbCredentials: {
           host: "",
           port: undefined,
@@ -144,10 +146,11 @@ export function AddDatabaseModal({
           username: "",
           password: "",
           ssl: false,
+          tls: false,
         },
       } as DatabaseFormData);
       setSelectedDb("postgres");
-      setConnectionMethod("parts");
+      setConnectionMethod("parameters");
       setDatabaseId(null);
       setDbName("");
     }
@@ -166,7 +169,7 @@ export function AddDatabaseModal({
     } else {
       reset({
         source: selectedDb,
-        mode: "parts",
+        mode: "parameters",
         dbCredentials: {
           host: "",
           port: undefined,
@@ -174,14 +177,16 @@ export function AddDatabaseModal({
           username: "",
           password: "",
           ssl: false,
+          tls: false,
         },
       } as DatabaseFormData);
     }
   }, [connectionMethod, selectedDb, reset]);
 
   const onSubmit = async (data: DatabaseFormData) => {
+    console.log("databaseId:", databaseId);
     try {
-      if (data.mode === "parts" && !data.dbCredentials.port) {
+      if (data.mode === "parameters" && !data.dbCredentials.port) {
         data.dbCredentials.port = data.source === "postgres" ? 5432 : 27017;
       }
       
@@ -189,6 +194,7 @@ export function AddDatabaseModal({
       console.log("Action:", submitAction);
 
       if (submitAction === "test") {
+        setDatabaseId(null);
         const response = await callTestConnection(data);
         const databaseId = response.data.data.databaseId;
         setDatabaseId(databaseId);
@@ -217,7 +223,9 @@ export function AddDatabaseModal({
       }
     } catch (error: any) {
       if (error instanceof Error) {
-        notifyError(error, "Failed to save database");
+        notifyError(error, submitAction === "test"
+          ? "Connection failed"
+          : "Failed to save database");
         return;
       }
       notifyError(
@@ -260,10 +268,10 @@ export function AddDatabaseModal({
                   <Image
                     src="/postgres-icon.png"
                     alt="PostgreSQL"
-                    width={48}
-                    height={48}
+                    width={68}
+                    height={68}
                   />
-                  <p className="text-sm font-semibold text-blue-800">
+                  <p className="text-sm font-semibold text-blue-900">
                     PostgreSQL
                   </p>
                 </CardContent>
@@ -284,6 +292,9 @@ export function AddDatabaseModal({
                     width={68}
                     height={68}
                   />
+                  <p className="text-sm font-semibold text-green-600">
+                    MongoDB
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -317,14 +328,14 @@ export function AddDatabaseModal({
             </Label>
             <Tabs
               value={connectionMethod}
-              onValueChange={(v) => setConnectionMethod(v as "url" | "parts")}
+              onValueChange={(v) => setConnectionMethod(v as "url" | "parameters")}
             >
               <TabsList className="grid w-full grid-cols-2 bg-transparent! h-auto! p-0!">
                 <TabsTrigger
-                  value="parts"
+                  value="parameters"
                   className=" text-black! data-[state=active]:border-gray-400! !data-[state=active]:bg-white !data-[state=active]:text-gray-900"
                 >
-                  By Parts
+                  By Parameters
                 </TabsTrigger>
                 <TabsTrigger
                   value="url"
@@ -334,7 +345,7 @@ export function AddDatabaseModal({
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="parts" className="space-y-4 mt-4">
+              <TabsContent value="parameters" className="space-y-4 mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <Field>
                     <Label htmlFor="host" className="text-gray-700">
@@ -469,11 +480,11 @@ export function AddDatabaseModal({
 
                 <div className="flex items-center space-x-2">
                 <Controller
-                  name="dbCredentials.ssl"
+                  name={selectedDb === "postgres" ? "dbCredentials.ssl" : "dbCredentials.tls"}
                   control={control}
                   render={({ field }) => (
                     <Checkbox
-                      id="ssl"
+                      id={selectedDb === "postgres" ? "ssl" : "tls"}
                       checked={field.value}
                       className="border-gray-400"
                       onCheckedChange={(checked) => {
@@ -483,12 +494,12 @@ export function AddDatabaseModal({
                   )}
                 />
                 <Label
-                  htmlFor="ssl"
+                  htmlFor={selectedDb === "postgres" ? "ssl" : "tls"}
                   className="text-gray-700 cursor-pointer font-normal"
                 >
-                  Enable SSL{" "}
+                  Enable {selectedDb === "postgres" ? "SSL" : "TLS"}{" "}
                   <span className="text-xs text-gray-500">
-                    (Enable if your database requires SSL/TLS connection)
+                    (Enable if your database requires {selectedDb === "postgres" ? "SSL" : "TLS"} connection)
                   </span>
                 </Label>
                 </div>

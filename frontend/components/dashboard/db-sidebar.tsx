@@ -16,8 +16,8 @@ import { DbSidebarSkeleton } from "@/components/skeletons";
 
 interface Database {
   id: string;
-  source: "postgres" | "mongo";
-  mode: "url" | "parts";
+  source: string;
+  mode: "url" | "parameters";
   dbName: string;
 }
 
@@ -105,7 +105,7 @@ const DbSidebar = () => {
       );
     }
     return (
-      <Image src="/mongo-icon.png" alt="MongoDB Icon" width={20} height={20} />
+      <Image src="/mongo-icon.png" alt="MongoDB Icon" width={32} height={32} />
     );
   };
   return (
