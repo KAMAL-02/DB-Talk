@@ -41,7 +41,7 @@ services:
 
   # Backend
   db-talk-backend:
-    image: kamal2502/db-talk-backend:fd51412
+    image: kamal2502/db-talk-backend:a671db0
     container_name: db-talk-backend
     restart: always
     ports:
@@ -68,7 +68,7 @@ services:
 
   # Frontend
   db-talk-frontend:
-    image: kamal2502/db-talk-frontend:fd51412
+    image: kamal2502/db-talk-frontend:a671db0
     container_name: db-talk-frontend
     restart: always
     ports:
